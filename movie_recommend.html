@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>电影推荐系统</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 24px;
+            background-color: #007BFF;
+            color: white;
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        h2 {
+            font-size: 20px;
+        }
+
+        label {
+            display: inline;
+            margin-right: 10px;
+        }
+
+        input[type="text"] {
+            padding: 10px;
+            width: 300px;
+            font-size: 16px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            margin-top: 20px;
+        }
+
+        .left {
+            flex: 1;
+            text-align: left;
+            padding: 10px;
+            background-color: #f4f4f4;
+            border-radius: 10px;
+            margin-right: 10px;
+            /* 增加右侧间距 */
+        }
+
+        .right {
+            flex: 2;
+            padding: 10px;
+            background-color: #f4f4f4;
+            border-radius: 10px;
+        }
+
+        .description {
+            white-space: pre-line;
+            /* 根据内容自动进行换行 */
+            overflow: hidden;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            margin: 10px 0;
+            font-size: 18px;
+        }
+
+        .similarity-score {
+            color: #007BFF;
+            font-weight: bold;
+        }
+
+        /* 鼠标悬停时的样式 */
+        .echarts-tooltip {
+            background-color: rgba(255, 255, 255, 0);
+            /* 透明色 */
+            border: none;
+            box-shadow: none;
+            color: #333;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        /* 鼠标悬停时的箭头样式 */
+        .echarts-tooltip-content {
+            background-color: transparent;
+        }
+
+        /* 鼠标悬停时的标题样式 */
+        .echarts-tooltip-title {
+            color: #333;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        /* 鼠标悬停时的内容样式 */
+        .echarts-tooltip-body {
+            padding-top: 10px;
+            line-height: 1.5;
+        }
+
+        /* 鼠标悬停时的换行样式 */
+        .description {
+            white-space: pre-line;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.3.1/dist/echarts.min.js"></script>
+</head>
+
+<body>
+    <h1>欢迎使用电影推荐系统</h1>
+
+    <div>
+        <label for="movieTitle">请输入电影名称:</label>
+        <input type="text" id="movieTitle" placeholder="输入电影名称">
+        <button onclick="getRecommendations()">获取推荐</button>
+    </div>
+
+    <div class="container">
+        <div class="left">
+            <h2>推荐电影列表:</h2>
+            <ul id="recommendations">
+                <!-- 推荐电影将在这里显示 -->
+            </ul>
+        </div>
+
+        <div class="right">
+            <h2>电影数据特征图:</h2>
+            <div id="movieChart" style="width: 100%; height: 350px;"></div>
+        </div>
+    </div>
+
+    <script>
+        // 初始化图表实例
+        var chart = echarts.init(document.getElementById("movieChart"));
+
+        function getRecommendations() {
+            // 清除图表
+            chart.clear();
+
+            var movieTitle = document.getElementById("movieTitle").value;
+            fetch(`http://localhost:5001/api/get_recommendations?movieTitle=${movieTitle}`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("recommendations").innerHTML = '';
+                    if (data.recommendations && data.recommendations.length > 0) {
+                        data.recommendations.forEach(function (movie, index) {
+                            var listItem = document.createElement("li");
+                            var similarityScore = data.similarity_scores[index];
+                            listItem.innerHTML = (index + 1) + '. ' + movie + ' (相似度得分: <span class="similarity-score">' + similarityScore + '</span>)';
+                            document.getElementById("recommendations").appendChild(listItem);
+                        });
+                    } else {
+                        var errorListItem = document.createElement("li");
+                        errorListItem.textContent = "很抱歉,没有推荐结果";
+                        document.getElementById("recommendations").appendChild(errorListItem);
+                    }
+
+                    if (data.similarity_scores) {
+                        // 创建柱状图数据项
+                        var barData = [];
+                        for (var i = 0; i < data.recommendations.length; i++) {
+                            barData.push({
+                                name: data.recommendations[i],
+                                value: data.similarity_scores[i]
+                            });
+                        }
+
+                        chart.setOption({
+                            title: {
+                                text: '相似度排行'
+                            },
+                            xAxis: {
+                                type: 'category',
+                                data: data.recommendations,
+                                axisLabel: {
+                                    rotate: -45  // 将标签旋转 45 度
+                                }
+                            },
+                            yAxis: {
+                                type: 'value'
+                            },
+                            series: [{
+                                type: 'bar',
+                                data: data.similarity_scores
+                            }],
+                            tooltip: {
+                                trigger: 'axis',
+                                formatter: function (params) {
+                                    var dataIndex = params[0].dataIndex;
+                                    var result = '电影名称: ' + data.recommendations[dataIndex]; // 获取横轴的名称
+                                    params.forEach(function (param) {
+                                        result += '<br/>' + '相似度评分' + ': ' + param.value;
+                                    });
+                                    var description = data.movie_descriptions[dataIndex];
+                                    result += '<br/>描述: <div class="description">' + description + '</div>';
+                                    return result;
+                                },
+                                position: [10, 10], // 设置 tooltip 的位置，[x, y]，以像素为单位
+                                extraCssText: 'width: 500px;', // 设置 tooltip 的宽度
+                            }
+                        });
+
+                    }
+                })
+                .catch(error => console.error('获取推荐电影时出错：', error));
+        }
+    </script>
+</body>
+
+</html>
