@@ -51,27 +51,40 @@
 
         .container {
             display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            margin-top: 20px;
+            /* 调整容器为左右布局 */
         }
 
-        .left {
+        .left,
+        .right {
             flex: 1;
-            text-align: left;
+            /* 两边各占一半宽度 */
             padding: 10px;
             background-color: #f4f4f4;
             border-radius: 10px;
-            margin-right: 10px;
-            /* 增加右侧间距 */
+            margin: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            height: 80vh;
+            /* 或其他合适的高度 */
+            overflow-y: auto;
+            /* 添加滚动 */
         }
 
         .right {
-            flex: 2;
-            padding: 10px;
-            background-color: #f4f4f4;
-            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+            gap: 20px;
+            /* 使右侧容器的内容垂直排列 */
         }
+
+        .right .top,
+        .right .bottom {
+            flex: 1;
+            /* 右侧上下两部分各占一半高度 */
+            margin: 10px 0;
+        }
+
+        /* 调整其他样式以适应新布局，如需要 */
 
         .description {
             white-space: pre-line;
@@ -128,42 +141,357 @@
         .description {
             white-space: pre-line;
         }
+
+        /* 静态推荐页面 */
+        .recommendation-list {
+            max-width: 800px;
+            margin: auto;
+        }
+
+        .movie {
+            background-color: #ffffff;
+            margin-bottom: 10px;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .rank {
+            font-size: 24px;
+            color: #ffac2d;
+        }
+
+        .title {
+            font-size: 20px;
+            color: #007bff;
+            margin-top: 5px;
+        }
+
+        .details {
+            font-size: 14px;
+            color: #777;
+            margin-top: 5px;
+        }
+
+        .description {
+            margin-top: 10px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        /* 导航栏登陆按钮 */
+        /* 顶部导航条样式 */
+        .top-bar {
+            background-color: #007bff;
+            /* 蓝色主题 */
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            /* 确保两侧内容分布均匀 */
+            align-items: center;
+            padding: 10px 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            /* 添加阴影效果 */
+        }
+
+        /* 登录与个人中心区域样式 */
+        .login-container,
+        .user-center {
+            display: flex;
+            align-items: center;
+        }
+
+        .login-container input[type='text'],
+        .login-container input[type='password'],
+        .user-center #user-name {
+            padding: 5px 10px;
+            margin-right: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            /* 轻微的边框 */
+        }
+
+        /* 使按钮更具吸引力 */
+        .login-container button {
+            background-color: #ffc107;
+            /* 亮黄色调 */
+            color: #fff;
+            border: none;
+            padding: 8px 15px;
+            cursor: pointer;
+            border-radius: 5px;
+            /* 圆角 */
+            transition: background-color 0.3s;
+            /* 过渡效果 */
+        }
+
+        .login-container button:hover,
+        .user-center button:hover {
+            background-color: #e0a800;
+            /* 深黄色调 */
+        }
+
+        /* 个人中心显示用户名 */
+        .user-center #user-name {
+            font-weight: bold;
+            /* 加粗用户名 */
+        }
+
+        /* 通用按钮样式 */
+        button {
+            cursor: pointer;
+        }
+
+        /* 调整响应式布局 */
+        @media (max-width: 768px) {
+            .top-bar {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .login-container,
+            .user-center {
+                width: 100%;
+                /* 在小屏幕上占满宽度 */
+                justify-content: space-between;
+                margin-top: 10px;
+            }
+        }
+
+        /* 电影详情样式 */
+        .movie-details {
+            background-color: #ffffff;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            text-align: left;
+            /* 文字对齐 */
+        }
+
+        .movie-details div {
+            margin-bottom: 10px;
+        }
+
+        .movie-details b {
+            color: #007bff;
+            /* 用于标题等重要信息 */
+        }
+
+        .rating span {
+            cursor: pointer;
+            /* 显示为可点击的手形图标 */
+            transition: transform 0.2s;
+            /* 添加平滑过渡效果 */
+            color: #ccc;
+            /* 默认的星星颜色 */
+        }
+
+        .rating span.rated {
+            color: #ffc107;
+            /* 亮起的星星颜色 */
+            content: "★";
+            /* 实心星星 */
+        }
+
+        .rating span:hover {
+            transform: scale(1.25);
+            /* 鼠标悬停时放大星星 */
+            color: #FFED85;
+            /* 或者改变颜色 */
+        }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/echarts@5.3.1/dist/echarts.min.js"></script>
 </head>
 
 <body>
-    <h1>欢迎使用电影推荐系统</h1>
+    <div class="top-bar">
+        <div>
+            <label for="movieTitle"></label>
+            <input type="text" id="movieTitle" placeholder="输入电影名称">
+            <button onclick="getRecommendations(movieTitle.value)">点击搜索</button>
+        </div>
+        <h1>欢迎使用电影推荐系统</h1>
+        <!-- 登录区域 -->
+        <div class="login-container" id="login-container">
+            <input type="text" id="username" placeholder="用户名" />
+            <input type="password" id="password" placeholder="密码" />
+            <button onclick="login()">登录</button>
+        </div>
 
-    <div>
-        <label for="movieTitle">请输入电影名称:</label>
-        <input type="text" id="movieTitle" placeholder="输入电影名称">
-        <button onclick="getRecommendations()">获取推荐</button>
+        <!-- 个人中心区域 -->
+        <div class="user-center" id="user-center" style="display: none;">
+            <span id="user-name"></span> <!-- 显示用户名 -->
+            <button onclick="logout()">登出</button>
+            <!-- 你可以在这里添加更多个人中心的内容 -->
+        </div>
+
     </div>
 
     <div class="container">
         <div class="left">
-            <h2>推荐电影列表:</h2>
-            <ul id="recommendations">
-                <!-- 推荐电影将在这里显示 -->
-            </ul>
+            <div id="staticRecommendations" class="recommendation-list">
+                <!-- 静态推荐列表 -->
+            </div>
         </div>
 
         <div class="right">
-            <h2>电影数据特征图:</h2>
-            <div id="movieChart" style="width: 100%; height: 350px;"></div>
+            <div class="movie-details" id="movie-details">
+                <h2>电影详情</h2>
+                <div id="rating-container">
+                    <!-- <p>点击星星进行评分</p> 提示性文字 -->
+                    <div class="rating">
+                        <span onclick="rateMovie(1)">☆</span>
+                        <span onclick="rateMovie(2)">☆</span>
+                        <span onclick="rateMovie(3)">☆</span>
+                        <span onclick="rateMovie(4)">☆</span>
+                        <span onclick="rateMovie(5)">☆</span>
+                    </div>
+                </div>
+
+                <div><b>标题:</b> <span id="movie-title"></span></div>
+                <div><b>导演:</b> <span id="movie-director"></span></div>
+                <div><b>演员:</b> <span id="movie-cast"></span></div>
+                <div><b>国家:</b> <span id="movie-country"></span></div>
+                <div><b>添加日期:</b> <span id="movie-date-added"></span></div>
+                <div><b>发布年份:</b> <span id="movie-release-year"></span></div>
+                <div><b>评级:</b> <span id="movie-rating"></span></div>
+                <div><b>时长:</b> <span id="movie-duration"></span></div>
+                <div><b>类别:</b> <span id="movie-listed-in"></span></div>
+                <div><b>描述:</b> <span id="movie-description"></span></div>
+            </div>
+            <div class="top">
+                <h2>相似电影推荐列表:</h2>
+                <ul id="recommendations">
+                    <!-- 推荐电影将在这里显示 -->
+                </ul>
+            </div>
+            <div class="bottom">
+                <h2>电影数据特征图:</h2>
+                <div id="movieChart" style="width: 100%; height: 350px;"></div>
+            </div>
         </div>
     </div>
 
     <script>
         // 初始化图表实例
         var chart = echarts.init(document.getElementById("movieChart"));
+        // Call the function on window load
+        window.onload = function () {
+            updateRecommendations();
+            updateLoginStatus();
+            test();
+        };
 
-        function getRecommendations() {
+        function test() {
+            const userId = localStorage.getItem('username');
+            fetch(`http://localhost:5001/api/item_based_recommendations?userId=${userId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data && data.length > 0) {
+                        // 有个性化推荐数据
+                        console.log(data);
+                    } else {
+                        // 没有个性化推荐数据，显示静态推荐
+                        console.log('no result');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching item-based recommendations:', error);
+                });
+        }
+
+        function updateRecommendations() {
+            // 检查用户是否登录
+            if (isLoggedIn()) {
+                // 如果登录了，尝试获取个性化推荐
+                getPersonalizedRecommendations();
+            } else {
+                // 如果没有登录，显示静态推荐
+                getStaticRecommendations();
+            }
+        }
+
+        function getPersonalizedRecommendations() {
+            const userId = localStorage.getItem('username');
+            fetch(`http://localhost:5001/api/get_personalized_recommendations?userId=${userId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data && data.length > 0) {
+                        // 有个性化推荐数据
+                        displayRecommendations(data, true);  // true 表示这是个性化推荐
+                    } else {
+                        // 没有个性化推荐数据，显示静态推荐
+                        getStaticRecommendations();
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching personalized recommendations:', error);
+                    getStaticRecommendations();  // 在出错时回退到静态推荐
+                });
+        }
+
+        function getStaticRecommendations() {
+            fetch('http://localhost:5001/api/static_recommendations')
+                .then(response => response.json())
+                .then(data => {
+                    if (data && data.movies) {
+                        displayRecommendations(data.movies, false);  // false 表示这是静态推荐
+                    }
+                })
+                .catch(error => console.error('Error fetching static recommendations:', error));
+        }
+
+        function displayRecommendations(movies, isPersonalized) {
+            const recommendationsDiv = document.getElementById("staticRecommendations");
+            recommendationsDiv.innerHTML = '';  // Clear existing content
+
+            // 如果是个性化推荐，添加"猜你喜欢"的标题
+            if (isPersonalized) {
+                const guessLikeHeader = document.createElement('h2');
+                guessLikeHeader.textContent = '猜你喜欢';
+                recommendationsDiv.appendChild(guessLikeHeader);
+            }
+
+            movies.forEach(function (movie) {
+                let movieDiv = document.createElement("div");
+                movieDiv.className = 'movie';
+                movieDiv.innerHTML = `
+                <div class="rank">${movie.rank || ''}</div>
+                <div class="title">
+                    <a href="#" onclick="event.preventDefault(); getRecommendations('${movie.title}'); recordClick(this, '${movie.rank}'); showMovieDetails('${movie.title}')">${movie.title}</a>
+                </div>
+                <div class="details">${movie.release_year || ''} / ${movie.country || ''} / ${movie.genres || ''}</div>
+                <div class="description">${movie.description || ''}</div>
+            `;
+                recommendationsDiv.appendChild(movieDiv);
+            });
+            // 当静态推荐列表加载完成后，调用 getRecommendations() 函数，并传入第一个电影的标题
+            if (movies.length > 0) {
+                getRecommendations(movies[0].title);
+                showMovieDetails(movies[0].title)
+                // console.log(data.movies[0]);
+            }
+        }
+
+        function updateLoginStatus() {
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            const username = localStorage.getItem('username'); // 获取用户名
+
+            if (isLoggedIn && username) {
+                switchToUserCenter(username); // 用户已登录，切换到用户中心视图
+            } else {
+                switchToLoginForm(); // 用户未登录，切换到登录表单视图
+            }
+        }
+
+        function getRecommendations(movieTitle) {
             // 清除图表
             chart.clear();
-
-            var movieTitle = document.getElementById("movieTitle").value;
+            console.log(movieTitle);
+            // var movieTitle = document.getElementById("movieTitle").value;
             fetch(`http://localhost:5001/api/get_recommendations?movieTitle=${movieTitle}`)
                 .then(response => response.json())
                 .then(data => {
@@ -230,6 +558,236 @@
                 })
                 .catch(error => console.error('获取推荐电影时出错：', error));
         }
+
+        function showMovieDetails(movieTitle) {
+            fetch(`http://localhost:5001/api/movie_details?title=${encodeURIComponent(movieTitle)}`)
+                .then(response => response.json())
+                .then(movieDetails => {
+                    if (movieDetails.error) {
+                        console.error(movieDetails.error);
+                        // Handle error: maybe the movie was not found or other issues
+                        return;
+                    }
+
+                    // 使用返回的电影数据更新UI
+                    document.getElementById("movie-title").textContent = movieDetails.title;
+                    document.getElementById("movie-director").textContent = movieDetails.director || "未知";
+                    document.getElementById("movie-cast").textContent = movieDetails.cast || "未知";
+                    document.getElementById("movie-country").textContent = movieDetails.country || "未知";
+                    document.getElementById("movie-date-added").textContent = movieDetails.date_added || "未知";
+                    document.getElementById("movie-release-year").textContent = movieDetails.release_year || "未知";
+                    document.getElementById("movie-rating").textContent = movieDetails.rating || "未知";
+                    document.getElementById("movie-duration").textContent = movieDetails.duration || "未知";
+                    document.getElementById("movie-listed-in").textContent = movieDetails.listed_in || "未知";
+                    document.getElementById("movie-description").textContent = movieDetails.description || "无描述";
+                    // 显示电影详情区域
+                    document.getElementById("movie-details").style.display = 'block';
+                    const movieId = movieDetails.show_id;  // 或者根据你的数据结构调整
+                    document.getElementById("movie-title").dataset.movieId = movieId;  // 存储电影ID
+
+                })
+                .catch(error => console.error('Error fetching movie details:', error));
+
+        }
+
+        function rateMovie(rating) {
+            if (!isLoggedIn()) {
+                // If not logged in, show the login modal
+                showLoginModal();
+                return;
+            }
+            const username = localStorage.getItem('username'); // 从localStorage中获取用户名
+            if (!username) {  // 检查username是否成功获取
+                alert('无法获取用户名，请重新登录！');
+                return;
+            }
+            const userId = username;
+            const movieId = document.getElementById('movie-title').dataset.movieId;  // 获取电影ID
+            const movieTitle = document.getElementById('movie-title').textContent; // assuming movie-title is the ID of movie title element
+            fetch('http://localhost:5001/api/rate_movie', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    userId: userId,
+                    movieId: movieId,
+                    title: movieTitle,
+                    rating: rating
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    // alert("Rating recorded: " + rating + " stars");
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            updateRatingStars(rating);
+        }
+
+        function updateRatingStars(rating) {
+            // 获取所有星星
+            let stars = document.querySelectorAll('.rating span');
+            stars.forEach((star, index) => {
+                if (index < rating) {
+                    star.classList.add('rated');
+                } else {
+                    star.classList.remove('rated');
+                }
+            });
+        }
+
+        function recordClick(element, movieId) {
+            // 假设的用户ID，实际应用中可能从登录会话或本地存储中获取
+            var username = document.getElementById('username').value;
+            const userId = username;
+
+            // 创建点击信息对象
+            const clickInfo = {
+                userId: userId,
+                movieId: movieId,
+                clickTime: new Date().toISOString() // ISO格式的时间
+            };
+
+            // 这里我们只是将点击信息输出到控制台表示
+            console.log("Click Recorded:", clickInfo);
+
+            // TODO: 实际应用中，你需要将clickInfo发送到后端服务，并由后端写入日志文件
+            fetch('http://localhost:5001/api/record_click', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    userId: userId,
+                    movieId: movieId,
+                    clickTime: new Date().toISOString() // ISO格式的时间
+                })
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok')
+                    }
+                    return response.json();
+                })
+                .then(data => {
+
+                })
+                .catch(error => {
+                    console.error(error);
+                })
+        }
+
+        function isLoggedIn() {
+            // 检查 localStorage 中的登录状态
+            return localStorage.getItem('isLoggedIn') === 'true';
+        }
+
+        function login() {
+            var username = document.getElementById('username').value;
+            var password = document.getElementById('password').value;
+
+            fetch('http://localhost:5001/api/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    username: username,
+                    password: password
+                })
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        // 可以在这里进行页面跳转或者其他操作
+                        alert("登录成功:"); // 给用户一个弹窗提示
+                        localStorage.setItem('isLoggedIn', 'true');  // 设置登录状态
+                        localStorage.setItem('username', username); // 存储用户名
+                        // 更新UI
+                        switchToUserCenter(username);
+                        // 成功登录后，更新推荐
+                        isLoggedIn();
+                        updateRecommendations();
+                    } else {
+                        console.log("登录失败: " + data.message);
+                        alert("登录失败: " + data.message); // 给用户一个弹窗提示
+                    }
+                })
+                .catch(error => {
+                    console.error('登录请求失败:', error);
+                    alert("登录请求失败，请检查网络或联系管理员！"); // 给用户一个弹窗提示
+                });
+
+        }
+
+        function logout() {
+            // 执行登出逻辑，例如清除客户端保存的登录状态
+            // 清除localStorage中的数据
+            localStorage.removeItem('isLoggedIn');
+            localStorage.removeItem('username');
+            switchToUserCenter();
+            // 更新UI回到登录表单
+            var loginContainer = document.getElementById('login-container');
+            var userCenter = document.getElementById('user-center');
+
+            loginContainer.style.display = 'block';  // 显示登录表单
+            userCenter.style.display = 'none';       // 隐藏用户中心
+            // 更新页面为未登录状态
+            document.location.reload();
+            // 成功登出后，更新推荐
+            updateRecommendations();
+        }
+
+        function showLoginModal() {
+            // Code to show modal...
+            // 修改为给出更明确的提示
+            alert('请登录后进行评分！');
+            // Show the login modal here instead of an alert in a real application
+        }
+
+        function switchToUserCenter(username) {
+            // 隐藏登录表单
+            var loginContainer = document.getElementById('login-container');
+            loginContainer.style.display = 'none';
+
+            // 显示用户中心区域并设置用户名
+            var userCenter = document.getElementById('user-center');
+            var userNameDisplay = document.getElementById('user-name');
+            userNameDisplay.textContent = username;  // 更新用户名
+            userCenter.style.display = 'block';
+        }
+
+        function showGuessLike() {
+            var guessLikeSection = document.getElementById('guess-like');
+            guessLikeSection.style.display = 'block';  // 显示猜你喜欢部分
+
+            // 假设 getGuessLikeRecommendations() 是获取猜你喜欢推荐的函数
+            // 这需要你的后端支持，提供基于用户的推荐
+            getGuessLikeRecommendations().then(recommendations => {
+                // 更新UI来显示这些推荐
+                var guessLikeList = document.getElementById('guess-like-list');
+                guessLikeList.innerHTML = recommendations.map(movie =>
+                    `<div>${movie.title}</div>`  // 根据你的需要调整显示方式
+                ).join('');
+            });
+        }
+
+        // 假设的获取推荐的函数，实际中需要从后端获取数据
+        function getGuessLikeRecommendations() {
+            // 这里用fetch向后端请求数据，返回Promise
+            return fetch('/api/get_guess_like', { /* ... */ })
+                .then(response => response.json())
+                .then(data => data.recommendations);  // 假设返回的数据是{ recommendations: [...] }
+        }
+
+
     </script>
 </body>
 
