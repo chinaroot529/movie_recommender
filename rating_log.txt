@@ -51,3 +51,14 @@ xjh, s784, Carnaval, 2, 2024-01-03T16:31:06.489437
 xjh, s2453, My Shy Boss, 1, 2024-01-03T16:31:09.555528
 xjh, s5238, Equestria Girls: Tales of Canterlot High, 5, 2024-01-03T16:31:12.503836
 xjh, s2012, Pets United, 4, 2024-01-03T16:31:16.222746
+xjh, s2919, The Ghost and the Tout, 5, 2024-01-05T12:50:49.601786
+xjh, s7942, Satan & Adam, 3, 2024-01-05T12:50:51.918836
+xjh, s4381, La Doña, 4, 2024-01-05T12:50:54.665432
+xjh, s1423, Apaharan, 1, 2024-01-05T12:50:57.764698
+xjh, s3794, Svaha: The Sixth Finger, 2, 2024-01-05T12:51:01.547062
+xjh, s3137, Game, 4, 2024-01-06T02:45:44.343516
+xjh, s2291, Tanu Weds Manu, 4, 2024-01-06T02:59:16.848554
+xjh, None, , 1, 2024-01-11T20:54:54.976024
+xjh, s3243, Narcoworld: Dope Stories, 5, 2024-01-11T21:07:35.484181
+xjh, s2311, David Foster: Off the Record, 5, 2024-01-11T21:13:12.497897
+xjh, s3137, Game, 3, 2024-03-11T00:10:38.079369

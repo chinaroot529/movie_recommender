@@ -51,6 +51,7 @@
 
         .container {
             display: flex;
+            height: 100%;
             /* 调整容器为左右布局 */
         }
 
@@ -302,6 +303,24 @@
             color: #FFED85;
             /* 或者改变颜色 */
         }
+
+        /* 在CSS中添加 */
+        @keyframes flash {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0;
+            }
+        }
+
+        .flash {
+            animation: flash 0.5s 2;
+            /* 0.5秒一次闪烁，总共2次 */
+        }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/echarts@5.3.1/dist/echarts.min.js"></script>
 </head>
@@ -311,7 +330,8 @@
         <div>
             <label for="movieTitle"></label>
             <input type="text" id="movieTitle" placeholder="输入电影名称">
-            <button onclick="getRecommendations(movieTitle.value)">点击搜索</button>
+            <button
+                onclick="findMovie(movieTitle.value),getRecommendations(movieTitle.value),showMovieDetails(movieTitle.value)">点击搜索</button>
         </div>
         <h1>欢迎使用电影推荐系统</h1>
         <!-- 登录区域 -->
@@ -332,6 +352,7 @@
 
     <div class="container">
         <div class="left">
+            <div id="searchResult" class="search-result"></div>
             <div id="staticRecommendations" class="recommendation-list">
                 <!-- 静态推荐列表 -->
             </div>
@@ -363,7 +384,7 @@
                 <div><b>描述:</b> <span id="movie-description"></span></div>
             </div>
             <div class="top">
-                <h2>相似电影推荐列表:</h2>
+                <h2>猜你喜欢:</h2>
                 <ul id="recommendations">
                     <!-- 推荐电影将在这里显示 -->
                 </ul>
@@ -378,31 +399,52 @@
     <script>
         // 初始化图表实例
         var chart = echarts.init(document.getElementById("movieChart"));
-        // Call the function on window load
+        // 页面加载完成时自动调用
         window.onload = function () {
             updateRecommendations();
             updateLoginStatus();
-            test();
+            // test();
         };
 
-        function test() {
-            const userId = localStorage.getItem('username');
-            fetch(`http://localhost:5001/api/item_based_recommendations?userId=${userId}`)
+        function findMovie(movieTitle) {
+            // 获取搜索结果显示区域的DOM元素
+            let searchResultDiv = document.getElementById('searchResult');
+
+            // 发送请求到后端API获取电影详情
+            fetch(`http://localhost:5001/api/find_movie?title=${encodeURIComponent(movieTitle)}`)
                 .then(response => response.json())
-                .then(data => {
-                    if (data && data.length > 0) {
-                        // 有个性化推荐数据
-                        console.log(data);
+                .then(movie => {
+                    if (movie && movie.title) {
+                        // 构建电影详情的HTML结构
+                        searchResultDiv.innerHTML = `
+                    <div class="movie">
+                        <div class="title">${movie.title}</div>
+                        <div class="details">${movie.release_year || ''} / ${movie.country || ''} / ${movie.rating || ''} / ${movie.listed_in || ''}</div>
+                        <div class="description">${movie.description || ''}</div>
+                    </div>
+                `;
+                        // 调用闪烁函数
+                        flashElement(searchResultDiv);
                     } else {
-                        // 没有个性化推荐数据，显示静态推荐
-                        console.log('no result');
+                        searchResultDiv.innerHTML = '<div>未找到电影</div>';
+                        // 调用闪烁函数提示未找到电影
+                        flashElement(searchResultDiv);
                     }
                 })
                 .catch(error => {
-                    console.error('Error fetching item-based recommendations:', error);
+                    console.error('查找电影出错：', error);
+                    searchResultDiv.innerHTML = '<div>查找电影出错</div>';
+                    // 调用闪烁函数提示错误
+                    flashElement(searchResultDiv);
                 });
         }
 
+        // 万金油代码，你需要测试什么就修改成什么
+        function test(movieTitle) {
+            console.log(movieTitle);
+        }
+
+        // 更新推荐列表，登录成功之后会展示出个性化推荐列表需要调用
         function updateRecommendations() {
             // 检查用户是否登录
             if (isLoggedIn()) {
@@ -414,6 +456,7 @@
             }
         }
 
+        // 获取个性化推荐列表
         function getPersonalizedRecommendations() {
             const userId = localStorage.getItem('username');
             fetch(`http://localhost:5001/api/get_personalized_recommendations?userId=${userId}`)
@@ -433,6 +476,7 @@
                 });
         }
 
+        // 获取静态推荐电影列表
         function getStaticRecommendations() {
             fetch('http://localhost:5001/api/static_recommendations')
                 .then(response => response.json())
@@ -444,6 +488,7 @@
                 .catch(error => console.error('Error fetching static recommendations:', error));
         }
 
+        // 展示电影详情数据
         function displayRecommendations(movies, isPersonalized) {
             const recommendationsDiv = document.getElementById("staticRecommendations");
             recommendationsDiv.innerHTML = '';  // Clear existing content
@@ -463,19 +508,21 @@
                 <div class="title">
                     <a href="#" onclick="event.preventDefault(); getRecommendations('${movie.title}'); recordClick(this, '${movie.rank}'); showMovieDetails('${movie.title}')">${movie.title}</a>
                 </div>
-                <div class="details">${movie.release_year || ''} / ${movie.country || ''} / ${movie.genres || ''}</div>
+                <div class="details">${movie.release_year || ''} / ${movie.country || ''} / ${movie.rating || ''} / ${movie.listed_in || ''}</div>
                 <div class="description">${movie.description || ''}</div>
             `;
                 recommendationsDiv.appendChild(movieDiv);
             });
             // 当静态推荐列表加载完成后，调用 getRecommendations() 函数，并传入第一个电影的标题
             if (movies.length > 0) {
+                console.log(movies[0].title);
                 getRecommendations(movies[0].title);
                 showMovieDetails(movies[0].title)
                 // console.log(data.movies[0]);
             }
         }
 
+        // 更新登录状态
         function updateLoginStatus() {
             const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
             const username = localStorage.getItem('username'); // 获取用户名
@@ -483,10 +530,11 @@
             if (isLoggedIn && username) {
                 switchToUserCenter(username); // 用户已登录，切换到用户中心视图
             } else {
-                switchToLoginForm(); // 用户未登录，切换到登录表单视图
+                // switchToUserCenter(); // 用户未登录，切换到登录表单视图
             }
         }
 
+        // 获取对应电影相似的电影列表
         function getRecommendations(movieTitle) {
             // 清除图表
             chart.clear();
@@ -557,8 +605,19 @@
                     }
                 })
                 .catch(error => console.error('获取推荐电影时出错：', error));
+
         }
 
+        function flashElement(element) {
+            element.classList.add("flash");
+
+            // 动画完成后移除类
+            setTimeout(() => {
+                element.classList.remove("flash");
+            }, 1000); // 动画总时长，确保和CSS中的持续时间一致
+        }
+
+        // 获取电影详情数据
         function showMovieDetails(movieTitle) {
             fetch(`http://localhost:5001/api/movie_details?title=${encodeURIComponent(movieTitle)}`)
                 .then(response => response.json())
@@ -590,6 +649,7 @@
 
         }
 
+        // 电影评分系统
         function rateMovie(rating) {
             if (!isLoggedIn()) {
                 // If not logged in, show the login modal
@@ -619,6 +679,7 @@
                 .then(response => response.json())
                 .then(data => {
                     // alert("Rating recorded: " + rating + " stars");
+                    console.log("Rating recorded: " + rating + " stars");
                 })
                 .catch(error => {
                     console.error('Error:', error);
@@ -626,6 +687,7 @@
             updateRatingStars(rating);
         }
 
+        // 刷新评分后的页面展示
         function updateRatingStars(rating) {
             // 获取所有星星
             let stars = document.querySelectorAll('.rating span');
@@ -638,6 +700,7 @@
             });
         }
 
+        // 页面埋点
         function recordClick(element, movieId) {
             // 假设的用户ID，实际应用中可能从登录会话或本地存储中获取
             var username = document.getElementById('username').value;
@@ -679,11 +742,13 @@
                 })
         }
 
+        // 登录状态
         function isLoggedIn() {
             // 检查 localStorage 中的登录状态
             return localStorage.getItem('isLoggedIn') === 'true';
         }
 
+        // 登录系统
         function login() {
             var username = document.getElementById('username').value;
             var password = document.getElementById('password').value;
@@ -727,6 +792,7 @@
 
         }
 
+        // 登出系统
         function logout() {
             // 执行登出逻辑，例如清除客户端保存的登录状态
             // 清除localStorage中的数据
@@ -745,6 +811,7 @@
             updateRecommendations();
         }
 
+        // 未登录状态展示
         function showLoginModal() {
             // Code to show modal...
             // 修改为给出更明确的提示
@@ -752,6 +819,7 @@
             // Show the login modal here instead of an alert in a real application
         }
 
+        // 登录之后的ui界面切换
         function switchToUserCenter(username) {
             // 隐藏登录表单
             var loginContainer = document.getElementById('login-container');
@@ -763,30 +831,6 @@
             userNameDisplay.textContent = username;  // 更新用户名
             userCenter.style.display = 'block';
         }
-
-        function showGuessLike() {
-            var guessLikeSection = document.getElementById('guess-like');
-            guessLikeSection.style.display = 'block';  // 显示猜你喜欢部分
-
-            // 假设 getGuessLikeRecommendations() 是获取猜你喜欢推荐的函数
-            // 这需要你的后端支持，提供基于用户的推荐
-            getGuessLikeRecommendations().then(recommendations => {
-                // 更新UI来显示这些推荐
-                var guessLikeList = document.getElementById('guess-like-list');
-                guessLikeList.innerHTML = recommendations.map(movie =>
-                    `<div>${movie.title}</div>`  // 根据你的需要调整显示方式
-                ).join('');
-            });
-        }
-
-        // 假设的获取推荐的函数，实际中需要从后端获取数据
-        function getGuessLikeRecommendations() {
-            // 这里用fetch向后端请求数据，返回Promise
-            return fetch('/api/get_guess_like', { /* ... */ })
-                .then(response => response.json())
-                .then(data => data.recommendations);  // 假设返回的数据是{ recommendations: [...] }
-        }
-
 
     </script>
 </body>

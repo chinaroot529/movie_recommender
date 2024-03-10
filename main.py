@@ -189,8 +189,9 @@ def static_recommendations():
             'cast': row['cast'],
             'release_year': row['release_year'],
             'country': row['country'],
-            'genres': row['listed_in'],
-            'description': row['description']
+            'listed_in': row['listed_in'],
+            'description': row['description'],
+            'rating':row['rating']
         })
 
     return jsonify(response_data)
@@ -315,6 +316,19 @@ def get_personalized_recommendations():
 
     except Exception as e:
         return jsonify({'error': str(e)})
+
+@app.route('/api/find_movie', methods=['GET'])
+def find_movie():
+    title = request.args.get('title')
+    if not title:
+        return jsonify({'error': '请提供电影名称'}), 400
+    print(title)
+    # 修改这里的代码
+    movie = next((row.to_dict() for index, row in data.iterrows() if row['title'] == title), None)
+    if movie:
+        return jsonify(movie)
+    else:
+        return jsonify({'error': '电影未找到'}), 404
 
 
 if __name__ == '__main__':
